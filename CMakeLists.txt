@@ -86,7 +86,7 @@ add_subdirectory( vendor/glslang )
 add_subdirectory( pompeiiUtils )
 #add_subdirectory( pompeiiEngine )
 
-add_subdirectory( demos )
+#add_subdirectory( demos )
 
 #if(${Boost_FOUND})
 #  add_subdirectory(tests)

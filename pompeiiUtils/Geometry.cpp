@@ -29,8 +29,8 @@ namespace pompeii
       const std::string& path, bool adjancency )
       : VulkanResource( device )
     {
-      pompeii::utility::ModelImporter mi( path );
-      pompeii::utility::Mesh mesh = mi._meshes[ 0 ];
+      pompeii::utils::ModelImporter mi( path );
+      pompeii::utils::Mesh mesh = mi._meshes[ 0 ];
 
       if ( adjancency )
       {
@@ -66,8 +66,8 @@ namespace pompeii
       const std::shared_ptr<Queue>& queue, const std::string& path )
       : VulkanResource( device )
     {
-      pompeii::utility::ModelImporter mi( path );
-      pompeii::utility::Mesh mesh = mi._meshes[ 0 ];
+      pompeii::utils::ModelImporter mi( path );
+      pompeii::utils::Mesh mesh = mi._meshes[ 0 ];
 
       _numIndices = mesh.numIndices;
       
