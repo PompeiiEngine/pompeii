@@ -1,0 +1,10 @@
+set( POMPEIIGLFWPLANARREFLECTION_HEADERS
+)
+set( POMPEIIGLFWPLANARREFLECTION_SOURCES
+	main.cpp
+)
+set( POMPEIIGLFWPLANARREFLECTION_LINK_LIBRARIES
+	pompeii
+	glfwPompeii
+)
+common_application( pompeiiGLFWPlanarReflection )

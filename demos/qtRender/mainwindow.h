@@ -1,5 +1,24 @@
-#ifndef __LAVA_QTRENDER_MAINWINDOW_H__
-#define __LAVA_QTRENDER_MAINWINDOW_H__
+/**
+ * Copyright (c) 2017 - 2018, Pompeii
+ * All rights reserved.
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ **/
+
+#ifndef __POMPEII_QTRENDER_MAINWINDOW_H__
+#define __POMPEII_QTRENDER_MAINWINDOW_H__
 
 
 #include <QtWidgets/QAction>
@@ -19,14 +38,14 @@
 #include <QtWidgets/QMessageBox>
 #include <QtWidgets/QFileDialog>
 
-#include <qtLava/qtLava.h>
+#include <qtPompeii/qtPompeii.h>
 
-class MainWindowRenderer : public lava::QtVulkanWindowRenderer
+class MainWindowRenderer : public pompeii::qt::VulkanWindowRenderer
 {
 private:
-  lava::QtVulkanWindow* _window;
+  pompeii::qt::VulkanWindow* _window;
 public:
-  MainWindowRenderer( lava::QtVulkanWindow* window )
+  MainWindowRenderer( pompeii::qt::VulkanWindow* window )
     : _window( window )
   {
   }
@@ -63,16 +82,16 @@ public:
   }
 };
 
-class VulkanWindow : public lava::QtVulkanWindow
+class VulkanWindow : public pompeii::qt::VulkanWindow
 {
   Q_OBJECT
 private:
 public:
   VulkanWindow( QWindow* parent = nullptr )
-    : lava::QtVulkanWindow( parent )
+    : pompeii::qt::VulkanWindow( parent )
   {
   }
-  virtual lava::QtVulkanWindowRenderer* createRenderer( void )
+  virtual pompeii::qt::VulkanWindowRenderer* createRenderer( void )
   {
     return new MainWindowRenderer( this );
   }
@@ -106,4 +125,4 @@ private:
   QStatusBar *statusBar;
 };
 
-#endif /* __LAVA_QTRENDER_MAINWINDOW_H__ */
+#endif /* __POMPEII_QTRENDER_MAINWINDOW_H__ */

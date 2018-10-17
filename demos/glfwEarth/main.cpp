@@ -1,8 +1,27 @@
+/**
+ * Copyright (c) 2017 - 2018, Pompeii
+ * All rights reserved.
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ **/
+
 #include <iostream>
 
-#include <glfwLava/glfwLava.h>
-#include <lavaUtils/lavaUtils.h>
-using namespace lava;
+#include <glfwPompeii/glfwPompeii.h>
+#include <pompeiiUtils/pompeiiUtils.h>
+using namespace pompeii;
 
 #include <routes.h>
 
@@ -12,12 +31,12 @@ using namespace lava;
 const unsigned int SCR_WIDTH = 500;
 const unsigned int SCR_HEIGHT = 500;
 
-class MainWindowRenderer : public lava::GLFWVulkanWindowRenderer
+class MainWindowRenderer : public glfw::VulkanWindowRenderer
 {
 private:
-  lava::GLFWVulkanWindow* _window;
+  glfw::VulkanWindow* _window;
 public:
-  MainWindowRenderer( lava::GLFWVulkanWindow* window )
+  MainWindowRenderer( glfw::VulkanWindow* window )
     : _window( window )
   {
     camera = Camera( glm::vec3( 0.0f, 0.0f, 3.5f ) );
@@ -37,8 +56,55 @@ public:
   {
     auto device = _window->device( );
 
-    geometry = std::make_shared<lava::utility::Geometry>( device,
-      LAVA_EXAMPLES_MESHES_ROUTE + std::string( "sphere.obj_" ) );
+
+    // TODO: BORRAR!!!!
+    vk::SampleCountFlagBits samples = vk::SampleCountFlagBits::e1;
+    pompeii::utility::RenderPassBuilder renderPass;
+    renderPass.setAttachment( vk::Format::eR16G16B16A16Sfloat, samples, 
+      vk::ImageLayout::eUndefined,
+      vk::ImageLayout::eGeneral, vk::AttachmentLoadOp::eClear );
+    renderPass.setAttachment( vk::Format::eR32G32B32A32Sfloat, samples, 
+      vk::ImageLayout::eUndefined,
+      vk::ImageLayout::eGeneral, vk::AttachmentLoadOp::eClear );
+    renderPass.setAttachment( vk::Format::eR16G16B16A16Sfloat, samples, 
+      vk::ImageLayout::eUndefined,
+      vk::ImageLayout::eGeneral, vk::AttachmentLoadOp::eClear );
+    renderPass.setAttachment( vk::Format::eR16G16B16A16Sfloat, samples, 
+      vk::ImageLayout::eUndefined,
+      vk::ImageLayout::eGeneral, vk::AttachmentLoadOp::eClear );
+    renderPass.setAttachment( vk::Format::eR16G16B16A16Sfloat, samples, 
+      vk::ImageLayout::eUndefined,
+      vk::ImageLayout::eGeneral, vk::AttachmentLoadOp::eClear );
+    renderPass.setAttachment( vk::Format::eD32Sfloat, samples, 
+      vk::ImageLayout::eUndefined,
+      vk::ImageLayout::eGeneral, vk::AttachmentLoadOp::eClear );
+    renderPass.addColorAttachmentReference( 0, vk::ImageLayout::eColorAttachmentOptimal );
+    renderPass.addColorAttachmentReference( 1, vk::ImageLayout::eColorAttachmentOptimal );
+    renderPass.addColorAttachmentReference( 2, vk::ImageLayout::eColorAttachmentOptimal );
+    renderPass.addColorAttachmentReference( 3, vk::ImageLayout::eColorAttachmentOptimal );
+    renderPass.addColorAttachmentReference( 4, vk::ImageLayout::eColorAttachmentOptimal );
+    renderPass.addDepthAttachmentReference( 5, vk::ImageLayout::eDepthStencilAttachmentOptimal );
+    renderPass.setSubpassDependency( VK_SUBPASS_EXTERNAL, 0,
+      vk::PipelineStageFlagBits::eBottomOfPipe,
+      vk::PipelineStageFlagBits::eColorAttachmentOutput,
+      vk::AccessFlagBits::eMemoryRead,
+      vk::AccessFlagBits::eColorAttachmentRead |
+      vk::AccessFlagBits::eColorAttachmentWrite,
+      vk::DependencyFlagBits::eByRegion );
+    renderPass.setSubpassDependency( 0, VK_SUBPASS_EXTERNAL,
+      vk::PipelineStageFlagBits::eColorAttachmentOutput,
+      vk::PipelineStageFlagBits::eBottomOfPipe,
+      vk::AccessFlagBits::eColorAttachmentRead |
+      vk::AccessFlagBits::eColorAttachmentWrite,
+      vk::AccessFlagBits::eMemoryRead,
+      vk::DependencyFlagBits::eByRegion );
+    renderPass.createSubpass( );
+    auto rp = renderPass.createRenderPass( device );
+
+
+
+    geometry = std::make_shared<pompeii::utility::Geometry>( device,
+      POMPEII_EXAMPLES_MESHES_ROUTE + std::string( "sphere.obj_" ) );
 
     // MVP buffers
     {
@@ -46,15 +112,15 @@ public:
       atmosphere.mvpBuffer = device->createUniformBuffer( sizeof( atmosphere.uboVS ) );
     }
 
-    tex = device->createTexture2D( LAVA_EXAMPLES_IMAGES_ROUTE +
+    tex = device->createTexture2D( POMPEII_EXAMPLES_IMAGES_ROUTE +
       std::string( "earth/earth_diffuse.jpg" ), _window->gfxCommandPool( ),
       _window->gfxQueue( ), vk::Format::eR8G8B8A8Unorm );
 
-    tex2 = device->createTexture2D( LAVA_EXAMPLES_IMAGES_ROUTE +
+    tex2 = device->createTexture2D( POMPEII_EXAMPLES_IMAGES_ROUTE +
       std::string( "earth/earth_normal.jpg" ), _window->gfxCommandPool( ),
       _window->gfxQueue( ), vk::Format::eR8G8B8A8Unorm );
 
-    tex3 = device->createTexture2D( LAVA_EXAMPLES_IMAGES_ROUTE +
+    tex3 = device->createTexture2D( POMPEII_EXAMPLES_IMAGES_ROUTE +
       std::string( "earth/earth_clouds.png" ), _window->gfxCommandPool( ),
       _window->gfxQueue( ), vk::Format::eR8G8B8A8Unorm );
 
@@ -67,11 +133,11 @@ public:
 
     {
       auto vertexStage = device->createShaderPipelineShaderStage(
-        LAVA_EXAMPLES_SPV_ROUTE + std::string( "mesh_vert.spv" ),
+        POMPEII_EXAMPLES_SPV_ROUTE + std::string( "mesh_vert.spv" ),
         vk::ShaderStageFlagBits::eVertex
       );
       auto fragmentStage = device->createShaderPipelineShaderStage(
-        LAVA_EXAMPLES_SPV_ROUTE + std::string( "mesh_frag.spv" ),
+        POMPEII_EXAMPLES_SPV_ROUTE + std::string( "mesh_frag.spv" ),
         vk::ShaderStageFlagBits::eFragment
       );
 
@@ -96,23 +162,26 @@ public:
 
       diffuse.pipelineLayout = device->createPipelineLayout( diffuse.descriptorSetLayout, pushConstantRange );
 
-      vk::VertexInputBindingDescription binding( 0, sizeof( lava::utility::Vertex ),
+      pompeii::utility::VertexInput vi( pompeii::utility::VertexLayout::POS_NORMAL_UV );
+
+      /*vk::VertexInputBindingDescription binding( 0, sizeof( pompeii::utility::Vertex ),
         vk::VertexInputRate::eVertex );
 
       PipelineVertexInputStateCreateInfo vertexInput( binding, {
         vk::VertexInputAttributeDescription(
           0, 0, vk::Format::eR32G32B32Sfloat,
-          offsetof( lava::utility::Vertex, position )
+          offsetof( pompeii::utility::Vertex, position )
         ),
         vk::VertexInputAttributeDescription(
           1, 0, vk::Format::eR32G32B32Sfloat,
-          offsetof( lava::utility::Vertex, normal )
+          offsetof( pompeii::utility::Vertex, normal )
         ),
         vk::VertexInputAttributeDescription(
           2, 0, vk::Format::eR32G32Sfloat,
-          offsetof( lava::utility::Vertex, texCoord )
+          offsetof( pompeii::utility::Vertex, texCoord )
         )
-      } );
+      } );*/
+      PipelineVertexInputStateCreateInfo vertexInput = vi.getPipelineVertexInput( );
 
       vk::PipelineInputAssemblyStateCreateInfo assembly( { },
         vk::PrimitiveTopology::eTriangleList, VK_FALSE );
@@ -171,11 +240,11 @@ public:
 
     {
       auto vertexStage = device->createShaderPipelineShaderStage(
-        LAVA_EXAMPLES_SPV_ROUTE + std::string( "atmosphere_vert.spv" ),
+        POMPEII_EXAMPLES_SPV_ROUTE + std::string( "atmosphere_vert.spv" ),
         vk::ShaderStageFlagBits::eVertex
       );
       auto fragmentStage = device->createShaderPipelineShaderStage(
-        LAVA_EXAMPLES_SPV_ROUTE + std::string( "atmosphere_frag.spv" ),
+        POMPEII_EXAMPLES_SPV_ROUTE + std::string( "atmosphere_frag.spv" ),
         vk::ShaderStageFlagBits::eFragment
       );
 
@@ -193,21 +262,21 @@ public:
 
       atmosphere.pipelineLayout = device->createPipelineLayout( atmosphere.descriptorSetLayout, nullptr );
 
-      vk::VertexInputBindingDescription binding( 0, sizeof( lava::utility::Vertex ),
+      vk::VertexInputBindingDescription binding( 0, sizeof( pompeii::utility::Vertex ),
         vk::VertexInputRate::eVertex );
 
       PipelineVertexInputStateCreateInfo vertexInput( binding, {
         vk::VertexInputAttributeDescription(
           0, 0, vk::Format::eR32G32B32Sfloat,
-          offsetof( lava::utility::Vertex, position )
+          offsetof( pompeii::utility::Vertex, position )
         ),
         vk::VertexInputAttributeDescription(
           1, 0, vk::Format::eR32G32B32Sfloat,
-          offsetof( lava::utility::Vertex, normal )
+          offsetof( pompeii::utility::Vertex, normal )
         ),
         vk::VertexInputAttributeDescription(
           2, 0, vk::Format::eR32G32Sfloat,
-          offsetof( lava::utility::Vertex, texCoord )
+          offsetof( pompeii::utility::Vertex, texCoord )
         )
       } );
 
@@ -304,49 +373,6 @@ public:
 
   void nextFrame( void ) override
   {
-    /*if ( Input::isKeyPressed( lava::Keyboard::Key::Esc ) )
-    {
-      _window->_window->close( );
-    }
-
-    if ( Input::isKeyPressed( lava::Keyboard::Key::A ) )
-    {
-      diffuse.pc.normalScale -= 0.1f;
-    }
-    else if ( Input::isKeyPressed( lava::Keyboard::Key::S ) )
-    {
-      diffuse.pc.normalScale += 0.1f;
-    }*/
-
-    //std::cout << "NORMAL SCALE: " << pc.normalScale << std::endl;
-
-    // Mouse event
-    /*{
-      if ( Input::MouseButtonPress( MouseButton::Left ) )
-      {
-        int xPos = Input::MouseX( );
-        int yPos = Input::MouseY( );
-        if ( firstMouse )
-        {
-          lastX = xPos;
-          lastY = yPos;
-          firstMouse = false;
-        }
-
-        float xoffset = xPos - lastX;
-        float yoffset = lastY - yPos; // reversed since y-coordinates go from bottom to top
-
-        lastX = xPos;
-        lastY = yPos;
-
-        camera.ProcessMouseMovement( xoffset, yoffset );
-      }
-      else if ( Input::MouseButtonRelease( MouseButton::Left ) )
-      {
-        firstMouse = true;
-      }
-    }*/
-
     updateMVP( );
 
     std::array<vk::ClearValue, 2 > clearValues;
@@ -371,7 +397,7 @@ public:
       cmd->bindDescriptorSets( vk::PipelineBindPoint::eGraphics,
         diffuse.pipelineLayout, 0, { diffuse.descriptorSet }, { } );
 
-      cmd->pushConstants<Diffuse::PushConstant>( *diffuse.pipelineLayout,
+      cmd->pushConstants<Diffuse::PushConstant>( diffuse.pipelineLayout,
         vk::ShaderStageFlagBits::eVertex, 0, diffuse.pc );
       geometry->render( cmd, 1 );
     }
@@ -431,7 +457,7 @@ public:
     } uboVS;
   } atmosphere;
 
-  std::shared_ptr< lava::utility::Geometry > geometry;
+  std::shared_ptr< pompeii::utility::Geometry > geometry;
 
 public:
   void mouseEvent( double xpos, double ypos )
@@ -453,12 +479,14 @@ public:
   }
 };
 
-class VulkanWindow : public lava::GLFWVulkanWindow
+class VulkanWindow : public glfw::VulkanWindow
 {
+protected:
+  MainWindowRenderer* _renderer;
 public:
   explicit VulkanWindow( int width, int height,
     const std::string& title, bool enableLayers )
-    : lava::GLFWVulkanWindow( width, height, title, enableLayers )
+    : glfw::VulkanWindow( width, height, title, enableLayers )
   {
   }
   virtual void keyEvent( int key, int act ) override
@@ -467,26 +495,27 @@ public:
     {
       if ( key == GLFW_KEY_A )
       {
-        (( MainWindowRenderer* )(renderer))->diffuse.pc.normalScale -= 0.1f;
+        _renderer->diffuse.pc.normalScale -= 0.1f;
       }
       else if ( key == GLFW_KEY_S )
       {
-        ( ( MainWindowRenderer* ) ( renderer ) )->diffuse.pc.normalScale += 0.1f;
+        _renderer->diffuse.pc.normalScale += 0.1f;
       }
     }
   }
   virtual void mouseEvent( double xPos, double yPos ) override
   {
-    ( ( MainWindowRenderer* ) ( renderer ) )->mouseEvent( xPos, yPos );
+    _renderer->mouseEvent( xPos, yPos );
   }
-  virtual lava::GLFWVulkanWindowRenderer* createRenderer( void ) override
+  virtual glfw::VulkanWindowRenderer* createRenderer( void ) override
   {
-    return new MainWindowRenderer( this );
+    _renderer = new MainWindowRenderer( this );
+    return _renderer;
   }
 };
 
 
-int main( int argc, char** argv )
+int main( int, char** )
 {
   VulkanWindow app( SCR_WIDTH, SCR_HEIGHT, "Earth with Clouds Atmosphere", true );
   app.show( );

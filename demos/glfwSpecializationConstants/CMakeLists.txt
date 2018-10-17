@@ -1,0 +1,11 @@
+set( POMPEIIGLFWSPECIALIZATIONCONSTANTS_HEADERS
+)
+set( POMPEIIGLFWSPECIALIZATIONCONSTANTS_SOURCES
+	main.cpp
+)
+set( POMPEIIGLFWSPECIALIZATIONCONSTANTS_LINK_LIBRARIES
+	pompeii
+	glfwPompeii
+	pompeiiUtils
+)
+common_application( pompeiiGLFWSpecializationConstants )

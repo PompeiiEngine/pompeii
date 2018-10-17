@@ -1,0 +1,10 @@
+set( POMPEIIGLFWCOMPUTECULLLOD_HEADERS
+)
+set( POMPEIIGLFWCOMPUTECULLLOD_SOURCES
+	main.cpp
+)
+set( POMPEIIGLFWCOMPUTECULLLOD_LINK_LIBRARIES
+	pompeii
+	glfwPompeii
+)
+common_application( pompeiiGLFWComputeCullLOD )

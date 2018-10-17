@@ -1,0 +1,10 @@
+set( POMPEIIGLFWGEOMETRYFIGURES_HEADERS
+)
+set( POMPEIIGLFWGEOMETRYFIGURES_SOURCES
+	main.cpp
+)
+set( POMPEIIGLFWGEOMETRYFIGURES_LINK_LIBRARIES
+	pompeii
+	glfwPompeii
+)
+common_application( pompeiiGLFWGeometryFigures )

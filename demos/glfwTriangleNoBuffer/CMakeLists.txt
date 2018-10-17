@@ -1,0 +1,10 @@
+set( POMPEIIGLFWTRIANGLENOBUFFER_HEADERS
+)
+set( POMPEIIGLFWTRIANGLENOBUFFER_SOURCES
+	main.cpp
+)
+set( POMPEIIGLFWTRIANGLENOBUFFER_LINK_LIBRARIES
+	pompeii
+	glfwPompeii
+)
+common_application( pompeiiGLFWTriangleNoBuffer )
