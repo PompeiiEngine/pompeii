@@ -1,5 +1,6 @@
 include_directories( 
 	${CMAKE_CURRENT_SOURCE_DIR}
+  ${PROJECT_SOURCE_DIR}/glslang
 )
 
 add_definitions(
@@ -56,11 +57,15 @@ set( POMPEIIUTILS_LINK_LIBRARIES
 	SPIRV
 )
 
-set( POMPEIIUTILS_PUBLIC_INCLUDE_DIRECTORIES
-	"${CMAKE_SOURCE_DIR}/vendor"
-)
+#set( POMPEIIUTILS_PUBLIC_INCLUDE_DIRECTORIES
+#	"${CMAKE_SOURCE_DIR}/vendor"
+#)
 
 set( POMPEIIUTILS_INCLUDE_NAME pompeiiUtils )
 set( POMPEIIUTILS_NAMESPACE pompeiiUtils )
 
 common_library( pompeiiUtils )
+
+target_include_directories( pompeiiUtils
+  PUBLIC    "${CMAKE_SOURCE_DIR}"
+)

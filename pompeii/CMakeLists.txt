@@ -112,3 +112,8 @@ set( POMPEII_LINK_LIBRARIES
 )
 
 common_library( pompeii )
+
+target_include_directories( pompeii
+  PUBLIC    "${VULKAN_INCLUDE_DIR}"
+  INTERFACE "${VULKAN_INCLUDE_DIR}"
+)

@@ -51,9 +51,6 @@ common_find_package( STBI REQUIRED SYSTEM )
 
 common_find_package( GLM SYSTEM )
 common_find_package( ASSIMP SYSTEM )
-common_find_package( GLFW3 SYSTEM 3.2.1 )
-common_find_package( Qt5Core SYSTEM 5.10 )
-common_find_package( Qt5Widgets SYSTEM 5.10 )
 
 common_find_package( Boost COMPONENTS unit_test_framework )
 
@@ -73,7 +70,8 @@ add_subdirectory( pompeii )
 option( ENABLE_GLSLANG_BINARIES "Enable GLSLang Binaries" OFF )
 option( BUILD_TESTING OFF )
 option( ENABLE_HLSL OFF)
-add_subdirectory( vendor/glslang )
+
+#add_subdirectory( vendor/glslang )
 
 #if( GLFW3_FOUND )
 #  add_subdirectory( glfwPompeii )
