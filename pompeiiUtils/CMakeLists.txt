@@ -69,3 +69,14 @@ common_library( pompeiiUtils )
 target_include_directories( pompeiiUtils
   PUBLIC    "${CMAKE_SOURCE_DIR}"
 )
+
+
+
+set( PRINTUNIFORMS_SOURCES
+  printUniforms.cpp
+)
+set( PRINTUNIFORMS_LINK_LIBRARIES
+  pompeii
+  pompeiiUtils
+)
+common_application( PrintUniforms )
